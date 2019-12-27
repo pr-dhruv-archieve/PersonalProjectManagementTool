@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/project")
@@ -23,8 +26,10 @@ public class ProjectController {
     private ProjectService projectService;
 
     /**
+     * Step 1
      * For creating the project POST method is going to be used becuase here we are sending the data into the server
      *
+     * Step 2
      * ResponseEntity allows us to provide more control on the JSON object.
      * ResponseEntity is Generic type. Here we are using the Project type of ResponseEntity
      *
@@ -32,26 +37,51 @@ public class ProjectController {
      *
      * Input parameter is Project JSON object which is going to be mapped with Project Model and stored into the database
      *
+     * Step 3
      * If the object is not valid then server is going to fire the exceptions which are very hard to understand.
-     * We need to validate the RequestBody first to for validating the obect the @Valid annotation is used. It gives
+     * We need to validate the RequestBody first to for validating the object the @Valid annotation is used. It gives
      * the better response if the RequestBody is not valid.
      *
      * If we are not using @Valid annotation then Error 500(Internal Server error) is going to be appeared which is not understandable
      * after using @Valid it gives Error 400(Bad Request) with details
      *
+     * Step 4
      * BindingResult is an interface which invokes the validation on the object.
      * It analyzes the object and determine the object have the error or not.
      *
-     * FieldError
+     * Step 5
+     * Now, we are trying to customizing the error JSON message in the following format
+     * {
+     *     "field":"message",
+     *     .
+     *     .
+     *     .
+     *     .
+     * }
+     * This is going to be easier to the ReactJS to catch the JSON data to grab and display whenever the bad data is sent to the server.
+     * For this we are going to useFieldError.
      *
+     * BindingResult result:
+     * It will contains all the errors if found. We need to extract the data which we want.
+     * Here we are using result.getFieldErrors() to get all the fields error and return List<FieldError>
+     * so the type of the ResponseEntity must be List<FieldError>
+     *
+     * Since from the result object/Bean we can receive only the field name not he default error message where the error message is displayed.
+     * JSON data follows the <key, value> pair concept which is easily implemented in the Map.
+     * So we will create a Map.
      */
     @PostMapping()
     public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult result) {
-        if(result.hasErrors())
-            return new ResponseEntity<List<FieldError>>(result.getFieldErrors(), HttpStatus.BAD_REQUEST);
-        /**
-         * Returning New ResponseEntity of type Project with and we have HttpResponse status that we want to setup.
-         */
+        if(result.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<String, String>();
+
+            for(FieldError error : result.getFieldErrors()) {
+                errorMap.put(error.getField(),error.getDefaultMessage());
+            }
+
+
+            return new ResponseEntity<Map<String, String>>(errorMap, HttpStatus.BAD_REQUEST);
+        }
         Project project1 = projectService.saveOrUpdateProject(project);
         return new ResponseEntity<Project>(project1,HttpStatus.CREATED);
     }
