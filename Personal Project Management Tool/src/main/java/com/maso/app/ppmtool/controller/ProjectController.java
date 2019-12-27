@@ -5,6 +5,7 @@ import com.maso.app.ppmtool.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,9 +37,14 @@ public class ProjectController {
      * If we are not using @Valid annotation then Error 500(Internal Server error) is going to be appeared which is not understandable
      * after using @Valid it gives Error 400(Bad Request) with details
      *
+     * BindingResult is an interface which invokes the validation on the object.
+     * It analyzes the object and determine the object have the error or not.
+     *
      */
     @PostMapping()
-    public ResponseEntity<Project> createNewProject(@Valid @RequestBody Project project) {
+    public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult result) {
+        if(result.hasErrors())
+            return new ResponseEntity<String>("Invalid Project Object", HttpStatus.BAD_REQUEST);
         /**
          * Returning New ResponseEntity of type Project with and we have HttpResponse status that we want to setup.
          */
