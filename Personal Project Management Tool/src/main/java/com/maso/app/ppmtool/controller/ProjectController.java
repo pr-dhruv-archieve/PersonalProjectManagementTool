@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/project")
 public class ProjectController {
@@ -27,13 +29,20 @@ public class ProjectController {
      *
      * Input parameter is Project JSON object which is going to be mapped with Project Model and stored into the database
      *
+     * If the object is not valid then server is going to fire the exceptions which are very hard to understand.
+     * We need to validate the RequestBody first to for validating the obect the @Valid annotation is used. It gives
+     * the better response if the RequestBody is not valid.
+     *
+     * If we are not using @Valid annotation then Error 500(Internal Server error) is going to be appeared which is not understandable
+     * after using @Valid it gives Error 400(Bad Request) with details
+     *
      */
     @PostMapping()
-    public ResponseEntity<Project> createNewProject(@RequestBody Project project) {
+    public ResponseEntity<Project> createNewProject(@Valid @RequestBody Project project) {
         /**
          * Returning New ResponseEntity of type Project with and we have HttpResponse status that we want to setup.
          */
         Project project1 = projectService.saveOrUpdateProject(project);
-        return new ResponseEntity<Project>(project,HttpStatus.CREATED);
+        return new ResponseEntity<Project>(project1,HttpStatus.CREATED);
     }
 }
