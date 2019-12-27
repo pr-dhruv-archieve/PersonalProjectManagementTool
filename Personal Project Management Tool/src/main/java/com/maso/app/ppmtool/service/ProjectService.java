@@ -1,6 +1,6 @@
 package com.maso.app.ppmtool.service;
 
-import com.maso.app.ppmtool.domain.Project;
+import com.maso.app.ppmtool.model.Project;
 import com.maso.app.ppmtool.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

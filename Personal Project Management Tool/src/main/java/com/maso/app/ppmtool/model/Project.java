@@ -1,4 +1,4 @@
-package com.maso.app.ppmtool.domain;
+package com.maso.app.ppmtool.model;
 
 import javax.persistence.*;
 import java.util.Date;

@@ -1,6 +1,6 @@
 package com.maso.app.ppmtool.repository;
 
-import com.maso.app.ppmtool.domain.Project;
+import com.maso.app.ppmtool.model.Project;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
