@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/project")
@@ -40,11 +42,13 @@ public class ProjectController {
      * BindingResult is an interface which invokes the validation on the object.
      * It analyzes the object and determine the object have the error or not.
      *
+     * FieldError
+     *
      */
     @PostMapping()
     public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult result) {
         if(result.hasErrors())
-            return new ResponseEntity<String>("Invalid Project Object", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<List<FieldError>>(result.getFieldErrors(), HttpStatus.BAD_REQUEST);
         /**
          * Returning New ResponseEntity of type Project with and we have HttpResponse status that we want to setup.
          */
