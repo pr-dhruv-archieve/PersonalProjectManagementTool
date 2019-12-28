@@ -1,6 +1,7 @@
 package com.maso.app.ppmtool.controller;
 
 import com.maso.app.ppmtool.model.Project;
+import com.maso.app.ppmtool.service.MapValidationErrorService;
 import com.maso.app.ppmtool.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,9 @@ public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private MapValidationErrorService mapValidationErrorService;
 
     /**
      * Step 1
@@ -69,19 +73,18 @@ public class ProjectController {
      * Since from the result object/Bean we can receive only the field name not he default error message where the error message is displayed.
      * JSON data follows the <key, value> pair concept which is easily implemented in the Map.
      * So we will create a Map.
+     *
+     * Step 6
+     * Remove Error logic from the controllers and put the logic in the service layer called the MapValidationErrorService
+     * and call the method by autowiring the object of MapValidationErrorService.
      */
     @PostMapping()
     public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult result) {
-        if(result.hasErrors()) {
-            Map<String, String> errorMap = new HashMap<String, String>();
-
-            for(FieldError error : result.getFieldErrors()) {
-                errorMap.put(error.getField(),error.getDefaultMessage());
-            }
-
-
-            return new ResponseEntity<Map<String, String>>(errorMap, HttpStatus.BAD_REQUEST);
-        }
+        // If errors found in the error Project Objects
+        ResponseEntity<?> errorMap = mapValidationErrorService.getValidationErrors(result);
+        if(errorMap != null)
+            return errorMap;
+        // If no errors are found in the Project Object
         Project project1 = projectService.saveOrUpdateProject(project);
         return new ResponseEntity<Project>(project1,HttpStatus.CREATED);
     }
