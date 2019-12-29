@@ -26,4 +26,17 @@ public class ProjectService {
 
     }
 
+    /**
+     * To avoiding the ambiguity we are using UPPER_CASE in the ProjectID
+     *
+     * @param projectId
+     * @return
+     */
+    public Project findByProjectIdentifier(String projectId) {
+        Project project = projectRepository.findByProjectIdentifier(projectId.toUpperCase());
+        if(project == null)
+            throw new ProjectIDException("Project ID '" + projectId.toUpperCase()+"' doesn't exist in the database");
+        return project;
+    }
+
 }
