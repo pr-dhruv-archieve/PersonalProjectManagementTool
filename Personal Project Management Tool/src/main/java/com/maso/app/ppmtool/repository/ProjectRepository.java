@@ -12,4 +12,12 @@ public interface ProjectRepository extends CrudRepository<Project, Long> {
      * @return
      */
     Project findByProjectIdentifier(String projectId);
+
+    /**
+     * This is method is used to find all the project in the database.
+     * We want to perform some changes in the method that is why we are overriding the method
+     * @return
+     */
+    @Override
+    Iterable<Project> findAll();
 }
