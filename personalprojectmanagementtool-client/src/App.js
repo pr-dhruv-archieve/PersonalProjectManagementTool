@@ -8,13 +8,13 @@ import AddProject from './component/Project/AddProject';
 
 function App() {
   return (
-    <Route>
+    <Router>
       <div className="App">
         <Header />
-        <Dashboard />
-        <Route path="/addProject" component={AddProject}/>
+        <Route exact path="/Dashboard" component={Dashboard}/>
+        <Route exact path="/addProject" component={AddProject}/>
       </div>
-    </Route>
+    </Router>
   );
 }
 
