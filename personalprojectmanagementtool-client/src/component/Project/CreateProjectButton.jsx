@@ -10,6 +10,6 @@ const CreateProjectButton = () => {
             </Link>
         </React.Fragment>
     );
-}
+};
 
 export default CreateProjectButton;
